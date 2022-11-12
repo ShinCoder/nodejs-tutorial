@@ -24,7 +24,10 @@ app.get('/api/courses/:id', (req, res) => {
     return course.id === parseInt(req.params.id);
   });
 
-  if (!course) res.status(404).send("The course with the given id was not found");
+  if (!course) {
+    res.status(404).send("The course with the given id was not found");
+    return;
+  }
   res.send(course);
 });
 // Handling GET request end
@@ -60,7 +63,7 @@ app.put('/api/courses/:id', (req, res) => {
     res.status(404).send("The course with the given id was not found");
     return;
   }
-  
+
   const schema = Joi.object({
     name: Joi.string().min(3).required()
   });
@@ -74,6 +77,22 @@ app.put('/api/courses/:id', (req, res) => {
   res.send(course);
 });
 // Handling PUT request end
+
+// Handling DELETE request
+app.delete('/api/courses/:id', (req, res) => {
+  const course = courses.find(function (course) {
+    return course.id === parseInt(req.params.id);
+  });
+  if (!course) {
+    res.status(404).send("The course with the given id was not found");
+    return;
+  }
+
+  const index = courses.indexOf(course);
+  courses.splice(index, 1);
+  res.send(course);
+});
+// Handling DELETE request end
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
