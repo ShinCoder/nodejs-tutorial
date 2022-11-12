@@ -10,15 +10,15 @@ const courses = [
   { id: 3, name: "courses3" }
 ];
 
+const validateCourse = (course) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).required()
+  });
+  const result = schema.validate(course);
+  return result;
+}
+
 // Handling GET request
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-});
-
-app.get('/api/courses', function (req, res) {
-  res.send(courses);
-});
-
 app.get('/api/courses/:id', (req, res) => {
   const course = courses.find(function (course) {
     return course.id === parseInt(req.params.id);
@@ -34,11 +34,7 @@ app.get('/api/courses/:id', (req, res) => {
 
 // Handling POST request
 app.post('/api/courses', (req, res) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required()
-  });
-
-  const result = schema.validate(req.body);
+  const result = validateCourse(req.body);
 
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
@@ -50,6 +46,7 @@ app.post('/api/courses', (req, res) => {
     name: req.body.name
   }
   courses.push(course);
+
   res.send(course);
 });
 // Handling POST request end
@@ -64,10 +61,7 @@ app.put('/api/courses/:id', (req, res) => {
     return;
   }
 
-  const schema = Joi.object({
-    name: Joi.string().min(3).required()
-  });
-  const result = schema.validate(req.body);
+  const result = validateCourse(req.body);
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
     return;
